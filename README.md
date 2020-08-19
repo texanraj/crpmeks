@@ -1,4 +1,4 @@
-# EKS
+# EKS install using CRPM
 
 Deploy an EKS cluster and an IDE that can be used to run kubectl commands.
 
