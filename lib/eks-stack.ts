@@ -247,5 +247,17 @@ export class EksStack extends cdk.Stack {
     
     // Fargate Pod Execution Role ARN Output
     new cdk.CfnOutput(this, 'FargatePodExecutionRoleArn', {value: fargatePodExecutionRole.attrArn});
+    
+    const roleNodegroupProps: crpm.Writeable<iam.CfnRoleProps> = crpm.load(`${__dirname}/../res/security-identity-compliance/iam/role-nodegroup/props.yaml`);
+    const roleNodegroup = new iam.CfnRole(this, 'Role', roleNodegroupProps);
+
+    const nodegroupProps: crpm.Writeable<eks.CfnNodegroupProps> = crpm.load(`${__dirname}/../res/compute/eks/nodegroup/props.yaml`);
+    nodegroupProps.clusterName = cluster.ref;
+    nodegroupProps.nodeRole = roleNodegroup.ref;
+    nodegroupProps.subnets = [privateSubnet1A.ref, privateSubnet1B.ref];
+    nodegroupProps.nodegroupName = cdk.Aws.STACK_NAME;
+    const nodegroup = new eks.CfnNodegroup(this, 'Nodegroup', nodegroupProps);
+
+
   }
 }
